@@ -1,66 +1,74 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace MiniCalculator;
-
-class Program
+namespace MiniCalculator
 {
-    static  ILogger Logger { get; set; }
-    static void Main()
+    class Program
     {
-        Logger = new Logger();
-        MiniCalculator minicalculator = new MiniCalculator();
-        minicalculator.Calculate();
+        static ILogger Logger { get; set; }
+        static void Main()
+        {           
+            Logger = new Logger();
+            MiniCalculator minicalculator = new MiniCalculator(Logger);
+            minicalculator.Calculate();            
+        }
     }
-}
-public interface ICalculator
-{
-    void Calculate();
-}
-public interface ILogger
-{
-    void Event(string message);  
-    void Error(string message);
-}
-public class Logger : ILogger
-{
-    public void Event(string message)
+    public interface ICalculator
     {
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.WriteLine(message);
-    }        
-    public void Error(string message)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(message);
+        void Calculate();
     }
-}
-public class MiniCalculator : Logger, ICalculator
-{
-    ILogger Logger { get; }
-    public void Calculate()
-    {      
-        bool validInput = false;
-        do
+    public interface ILogger
+    {
+        void Event(string message);
+        void Error(string message);
+    }
+    public class Logger : ILogger
+    {
+        public void Event(string message)
         {
-            try
+            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+        public void Error(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+    }
+    public class MiniCalculator : ICalculator
+    {
+        ILogger Logger { get; }
+        public MiniCalculator(ILogger logger)
+        {
+            Logger = logger;
+        }
+        public void Calculate()
+        {
+            bool validInput = false;
+            do
             {
-                Logger.Event("Enter the first number for addition:");
-                long a = Convert.ToInt64(Console.ReadLine());
-                Logger.Event("Enter the second number for addition:");
-                long b = Convert.ToInt64(Console.ReadLine());
-                var result = a + b;
-                Logger.Event("Here is your result: " + result);
-                validInput = true;
-            }
-            catch (FormatException)
-            {
-                Logger.Error("What you entered is NOT a number!");
-            }
-            finally
-            {
-                Console.ReadKey();
-            }
-        } while (!validInput);
+                try
+                {
+                    Logger.Event("Enter the first number for addition:");
+                    long a = Convert.ToInt64(Console.ReadLine());
+                    Logger.Event("Enter the second number for addition:");
+                    long b = Convert.ToInt64(Console.ReadLine());
+                    var result = a + b;
+                    Logger.Event("Here is your result: " + result);
+                    validInput = true;
+                }
+                catch (FormatException)
+                {
+                    Logger.Error("What you entered is NOT a number!");
+                }
+                finally
+                {
+                    Console.ReadKey();
+                }
+            } while (!validInput);
+        }
     }
 }
