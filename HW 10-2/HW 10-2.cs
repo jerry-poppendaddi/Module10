@@ -48,7 +48,7 @@ namespace MiniCalculator
         public void Calculate()
         {
             bool validInput = false;
-            do
+            do                                                               //я это сделал чтобы цикл не прерывался на ошибке и продолжал спрашивать цифру
             {
                 try
                 {
